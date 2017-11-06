@@ -1,0 +1,26 @@
+---
+- hosts: my_pi
+  vars:
+    ntp_server: 0.de.pool.ntp.org
+  become: yes
+  tasks:
+  - name: Ensure ntp is enstalled
+    apt:
+      name: ntp
+      state: latest
+  - name: Write /etc/ntp.conf
+    template:
+      src: ntp.conf.j2
+      dest: /etc/ntp.conf
+    notify:
+    - restart ntp
+  - name: Ensure ntp is running
+    service:
+      name: ntp
+      state: started
+  handlers:
+  - name: restart ntp
+    service:
+      name: ntp
+      state: restarted
+
